@@ -221,6 +221,10 @@ export function getProjectImage(repoName: string, language: string | null): stri
   
   // Map of specific project images (add your custom images here)
   const projectImages: Record<string, string> = {
+    // Portfolio
+    'portfolioyameenrafiqi': '/portfolio.png',
+    'portfolio': '/portfolio.png',
+    
     // RawSpill
     'realrawspill': '/rawspill.png',
     'rawspill': '/rawspill.png',
@@ -258,7 +262,11 @@ export function getProjectImage(repoName: string, language: string | null): stri
  */
 export function getProjectLiveUrl(repoName: string): string | null {
   // Normalize the repo name: lowercase and remove spaces/hyphens/underscores
-  const normalizedName = repoName.toLowerCase().replace(/[\s\-_]/g, '');
+  constPortfolio
+    'portfolioyameenrafiqi': 'https://portfolio-yameen-rafiqi.vercel.app/',
+    'portfolio': 'https://portfolio-yameen-rafiqi.vercel.app/',
+    
+    //  normalizedName = repoName.toLowerCase().replace(/[\s\-_]/g, '');
   
   // Map of normalized project names to their live URLs
   const liveUrls: Record<string, string> = {
