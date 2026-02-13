@@ -6,19 +6,16 @@ import Script from 'next/script';
 // Optimize font loading with Next.js Font optimization
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
-  preload: true,
   fallback: ['system-ui', 'arial'],
 });
 
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'],
   variable: '--font-poppins',
   display: 'swap',
-  preload: true,
   fallback: ['system-ui', 'arial'],
 });
 
