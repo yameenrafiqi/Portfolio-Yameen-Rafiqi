@@ -262,14 +262,14 @@ export function getProjectImage(repoName: string, language: string | null): stri
  */
 export function getProjectLiveUrl(repoName: string): string | null {
   // Normalize the repo name: lowercase and remove spaces/hyphens/underscores
-  constPortfolio
-    'portfolioyameenrafiqi': 'https://portfolio-yameen-rafiqi.vercel.app/',
-    'portfolio': 'https://portfolio-yameen-rafiqi.vercel.app/',
-    
-    //  normalizedName = repoName.toLowerCase().replace(/[\s\-_]/g, '');
+  const normalizedName = repoName.toLowerCase().replace(/[\s\-_]/g, '');
   
   // Map of normalized project names to their live URLs
   const liveUrls: Record<string, string> = {
+    // Portfolio
+    'portfolioyameenrafiqi': 'https://portfolio-yameen-rafiqi.vercel.app/',
+    'portfolio': 'https://portfolio-yameen-rafiqi.vercel.app/',
+    
     // Mosque Management System
     'mosquemanagementsystem': 'https://masjid-al-taqwa-lolab.netlify.app/',
     'masjid': 'https://masjid-al-taqwa-lolab.netlify.app/',
