@@ -12,9 +12,9 @@
   --glass-bg: rgba(26, 26, 26, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
   
-  /* Font variables using Next.js optimized fonts */
-  --font-inter: var(--font-inter);
-  --font-poppins: var(--font-poppins);
+  /* System fonts for maximum compatibility and speed */
+  --font-inter: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-poppins: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 @layer base {
