@@ -14,6 +14,9 @@ const ParticleBackground = () => {
     // Particles loaded callback
   }, []);
 
+  // Detect if mobile device
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <Particles
       id="tsparticles"
@@ -30,11 +33,11 @@ const ParticleBackground = () => {
         interactivity: {
           events: {
             onClick: {
-              enable: true,
+              enable: !isMobile,
               mode: 'push',
             },
             onHover: {
-              enable: true,
+              enable: !isMobile,
               mode: 'repulse',
             },
             resize: true,
@@ -55,10 +58,10 @@ const ParticleBackground = () => {
           },
           links: {
             color: '#00FF94',
-            distance: 150,
+            distance: isMobile ? 100 : 150,
             enable: true,
-            opacity: 0.5,
-            width: 1.5,
+            opacity: isMobile ? 0.15 : 0.5,
+            width: isMobile ? 0.5 : 1.5,
           },
           collisions: {
             enable: true,
@@ -70,7 +73,7 @@ const ParticleBackground = () => {
               default: 'bounce',
             },
             random: false,
-            speed: 1.5,
+            speed: isMobile ? 0.8 : 1.5,
             straight: false,
           },
           number: {
@@ -78,16 +81,16 @@ const ParticleBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 100,
+            value: isMobile ? 40 : 100,
           },
           opacity: {
-            value: 0.6,
+            value: isMobile ? 0.2 : 0.6,
           },
           shape: {
             type: 'circle',
           },
           size: {
-            value: { min: 1, max: 4 },
+            value: { min: 1, max: isMobile ? 2 : 4 },
           },
         },
         detectRetina: true,
