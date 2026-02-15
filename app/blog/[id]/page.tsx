@@ -52,7 +52,7 @@ export default function BlogDetailPage() {
 
         {/* Content Skeleton */}
         <div className="pt-24 pb-20">
-          <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Image Skeleton */}
             <div className="mb-8 rounded-2xl overflow-hidden bg-gray-800 h-[400px] animate-pulse"></div>
 
@@ -62,31 +62,36 @@ export default function BlogDetailPage() {
             </div>
 
             {/* Title Skeleton */}
-            <div className="mb-6 space-y-3">
-              <div className="h-12 bg-gray-800 rounded animate-pulse"></div>
-              <div className="h-12 bg-gray-800 rounded w-3/4 animate-pulse"></div>
+            <div className="mb-4 space-y-3">
+              <div className="h-16 bg-gray-800 rounded animate-pulse"></div>
+              <div className="h-16 bg-gray-800 rounded w-3/4 animate-pulse"></div>
+            </div>
+
+            {/* Author Skeleton */}
+            <div className="mb-6">
+              <div className="h-6 w-40 bg-gray-800 rounded animate-pulse"></div>
             </div>
 
             {/* Meta Skeleton */}
-            <div className="flex items-center gap-6 mb-8 pb-8 border-b border-gray-700">
+            <div className="flex items-center gap-6 mb-12 pb-8 border-b border-gray-800">
               <div className="h-5 w-32 bg-gray-800 rounded animate-pulse"></div>
               <div className="h-5 w-24 bg-gray-800 rounded animate-pulse"></div>
             </div>
 
             {/* Excerpt Skeleton */}
-            <div className="mb-8 p-6 glass-card rounded-xl border-l-4 border-gray-700 space-y-3">
+            <div className="mb-12 border-l-4 border-gray-700 pl-6 py-2 space-y-3">
               <div className="h-6 bg-gray-800 rounded animate-pulse"></div>
               <div className="h-6 bg-gray-800 rounded animate-pulse"></div>
               <div className="h-6 bg-gray-800 rounded w-2/3 animate-pulse"></div>
             </div>
 
             {/* Content Skeleton */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="space-y-2">
-                  <div className="h-4 bg-gray-800 rounded animate-pulse"></div>
-                  <div className="h-4 bg-gray-800 rounded animate-pulse"></div>
-                  <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
+                <div key={i} className="space-y-3">
+                  <div className="h-5 bg-gray-800 rounded animate-pulse"></div>
+                  <div className="h-5 bg-gray-800 rounded animate-pulse"></div>
+                  <div className="h-5 bg-gray-800 rounded w-5/6 animate-pulse"></div>
                 </div>
               ))}
             </div>
@@ -130,7 +135,7 @@ export default function BlogDetailPage() {
 
       {/* Content */}
       <div className="pt-24 pb-20">
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Featured Image */}
           {blog.image && (
             <motion.div
@@ -163,17 +168,27 @@ export default function BlogDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl md:text-5xl font-bold mb-6 gradient-text"
+            className="text-4xl md:text-6xl font-bold mb-4 text-white leading-tight"
           >
             {blog.title}
           </motion.h1>
+
+          {/* Author */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="text-lg text-gray-400 mb-6"
+          >
+            By <span className="text-white font-semibold">Yameen Rafiqi</span>
+          </motion.div>
 
           {/* Date and Read Time */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex items-center gap-6 text-gray-400 mb-8 pb-8 border-b border-gray-700"
+            className="flex items-center gap-6 text-gray-400 mb-12 pb-8 border-b border-gray-800"
           >
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
@@ -194,7 +209,7 @@ export default function BlogDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-xl text-gray-300 mb-8 p-6 glass-card rounded-xl border-l-4 border-[#00FF94]"
+            className="text-xl leading-relaxed text-gray-300 mb-12 italic border-l-4 border-[#00FF94] pl-6 py-2"
             dangerouslySetInnerHTML={{ __html: blog.excerpt }}
           />
 
@@ -203,13 +218,24 @@ export default function BlogDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="prose prose-invert prose-lg max-w-none 
-              prose-headings:text-[#00FF94] 
+            className="prose prose-invert prose-xl max-w-none 
+              prose-headings:text-white 
               prose-headings:font-bold 
+              prose-headings:mb-6
+              prose-headings:mt-12
+              prose-h1:text-4xl
+              prose-h2:text-3xl
+              prose-h3:text-2xl
+              prose-p:text-gray-200
+              prose-p:leading-relaxed
+              prose-p:mb-6
+              prose-p:text-lg
               prose-a:text-[#00FF94] 
               prose-a:no-underline 
               prose-a:hover:underline
-              prose-strong:text-[#00FF94]
+              prose-strong:text-white
+              prose-strong:font-bold
+              prose-em:text-gray-300
               prose-code:text-[#00FF94]
               prose-code:bg-gray-800
               prose-code:px-2
@@ -218,8 +244,23 @@ export default function BlogDetailPage() {
               prose-pre:bg-gray-800
               prose-pre:border
               prose-pre:border-gray-700
+              prose-pre:p-4
               prose-img:rounded-lg
-              prose-hr:border-gray-700"
+              prose-img:my-8
+              prose-hr:border-gray-700
+              prose-hr:my-8
+              prose-ul:text-gray-200
+              prose-ul:text-lg
+              prose-ul:my-6
+              prose-ol:text-gray-200
+              prose-ol:text-lg
+              prose-ol:my-6
+              prose-li:mb-2
+              prose-blockquote:border-l-4
+              prose-blockquote:border-[#00FF94]
+              prose-blockquote:pl-6
+              prose-blockquote:italic
+              prose-blockquote:text-gray-300"
             dangerouslySetInnerHTML={{ __html: blog.content || blog.excerpt }}
           />
 
