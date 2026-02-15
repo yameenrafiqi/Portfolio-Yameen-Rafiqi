@@ -58,10 +58,10 @@ const ParticleBackground = () => {
           },
           links: {
             color: '#00FF94',
-            distance: isMobile ? 100 : 150,
+            distance: isMobile ? 120 : 150,
             enable: true,
-            opacity: isMobile ? 0.15 : 0.5,
-            width: isMobile ? 0.5 : 1.5,
+            opacity: isMobile ? 0.3 : 0.5,
+            width: isMobile ? 1 : 1.5,
           },
           collisions: {
             enable: true,
@@ -73,7 +73,7 @@ const ParticleBackground = () => {
               default: 'bounce',
             },
             random: false,
-            speed: isMobile ? 0.8 : 1.5,
+            speed: isMobile ? 1.2 : 1.5,
             straight: false,
           },
           number: {
@@ -81,16 +81,16 @@ const ParticleBackground = () => {
               enable: true,
               area: 800,
             },
-            value: isMobile ? 40 : 100,
+            value: isMobile ? 65 : 100,
           },
           opacity: {
-            value: isMobile ? 0.2 : 0.6,
+            value: isMobile ? 0.4 : 0.6,
           },
           shape: {
             type: 'circle',
           },
           size: {
-            value: { min: 1, max: isMobile ? 2 : 4 },
+            value: { min: 1, max: isMobile ? 3 : 4 },
           },
         },
         detectRetina: true,
