@@ -453,7 +453,26 @@ export default function AdminPage() {
                   Sign In
                 </Button>
 
-                <div className="text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-700"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-[#1A1A1A] text-gray-400">Don't have an account?</span>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={() => router.push('/signup')}
+                  variant="outline"
+                  className="w-full border-[#00FF94] text-[#00FF94] hover:bg-[#00FF94] hover:text-black font-semibold py-3"
+                >
+                  <Shield className="w-4 h-4 mr-2" />
+                  Sign Up to Submit Posts
+                </Button>
+
+                <div className="text-center pt-2">
                   <button
                     type="button"
                     onClick={() => router.push('/')}
