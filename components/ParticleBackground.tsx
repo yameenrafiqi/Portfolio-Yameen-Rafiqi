@@ -57,8 +57,8 @@ const ParticleBackground = () => {
             color: '#00FF94',
             distance: 150,
             enable: true,
-            opacity: 0.1,
-            width: 1,
+            opacity: 0.5,
+            width: 1.5,
           },
           collisions: {
             enable: true,
@@ -70,7 +70,7 @@ const ParticleBackground = () => {
               default: 'bounce',
             },
             random: false,
-            speed: 1,
+            speed: 1.5,
             straight: false,
           },
           number: {
@@ -78,16 +78,16 @@ const ParticleBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 80,
+            value: 100,
           },
           opacity: {
-            value: 0.15,
+            value: 0.6,
           },
           shape: {
             type: 'circle',
           },
           size: {
-            value: { min: 1, max: 3 },
+            value: { min: 1, max: 4 },
           },
         },
         detectRetina: true,

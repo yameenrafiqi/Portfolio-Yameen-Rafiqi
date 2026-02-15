@@ -21,7 +21,7 @@ export default function Home() {
       
       <Navigation />
       
-      <div className="relative z-10">
+      <div className="relative z-20">
         <HeroSection />
         <AboutSection />
         <SkillsSection />
