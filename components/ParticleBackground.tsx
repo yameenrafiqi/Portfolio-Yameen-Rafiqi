@@ -38,13 +38,25 @@ const ParticleBackground = () => {
             },
             onHover: {
               enable: !isMobile,
-              mode: 'repulse',
+              mode: ['grab', 'bubble'],
             },
             resize: true,
           },
           modes: {
             push: {
               quantity: 4,
+            },
+            grab: {
+              distance: 200,
+              links: {
+                opacity: 0.8,
+              },
+            },
+            bubble: {
+              distance: 250,
+              size: 6,
+              duration: 2,
+              opacity: 0.8,
             },
             repulse: {
               distance: 200,
@@ -75,6 +87,13 @@ const ParticleBackground = () => {
             random: false,
             speed: isMobile ? 1.2 : 1.5,
             straight: false,
+            attract: {
+              enable: true,
+              rotateX: 600,
+              rotateY: 1200,
+            },
+            bounce: false,
+            smooth: true,
           },
           number: {
             density: {
@@ -85,15 +104,35 @@ const ParticleBackground = () => {
           },
           opacity: {
             value: isMobile ? 0.4 : 0.6,
+            animation: {
+              enable: true,
+              speed: 1,
+              minimumValue: isMobile ? 0.2 : 0.3,
+              sync: false,
+            },
           },
           shape: {
             type: 'circle',
           },
           size: {
             value: { min: 1, max: isMobile ? 3 : 4 },
+            animation: {
+              enable: true,
+              speed: 2,
+              minimumValue: 0.5,
+              sync: false,
+            },
           },
         },
         detectRetina: true,
+        smooth: true,
+        motion: {
+          disable: false,
+          reduce: {
+            factor: 4,
+            value: true,
+          },
+        },
       }}
     />
   );
