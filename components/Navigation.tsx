@@ -63,7 +63,7 @@ const Navigation = () => {
               title="Schedule a meeting"
             >
               <Calendar size={20} />
-              <span className="text-sm font-medium">Book a meeting</span>
+              <span className="text-sm font-medium hidden md:inline">Book a meeting</span>
             </motion.button>
             
             <Link href="/admin">
@@ -73,7 +73,7 @@ const Navigation = () => {
                 title="Admin Panel"
               >
                 <Shield size={18} />
-                <span className="text-sm font-medium hidden lg:inline">Admin</span>
+                <span className="text-sm font-medium hidden md:inline">Admin</span>
               </motion.button>
             </Link>
             
