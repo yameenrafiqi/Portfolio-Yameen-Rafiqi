@@ -18,6 +18,7 @@ const ProjectsSection = () => {
   const [githubProjects, setGithubProjects] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [useGitHub, setUseGitHub] = useState(true);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   // Featured projects (fallback if GitHub fetch fails)
   const featuredProjects = [
@@ -118,6 +119,10 @@ const ProjectsSection = () => {
     };
 
     loadGitHubProjects();
+  }, []);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
   }, []);
 
   // Get categories from GitHub projects or use default
@@ -227,7 +232,7 @@ const ProjectsSection = () => {
                     <motion.div
                       key={ghRepo.id}
                       variants={itemVariants}
-                      whileHover={{ y: -10 }}
+                      whileHover={isTouchDevice ? {} : { y: -10 }}
                       className="glass-card overflow-hidden group hover:neon-glow transition-all duration-500"
                     >
                       <div className="relative overflow-hidden h-48">
@@ -288,7 +293,7 @@ const ProjectsSection = () => {
 
                         <div className="flex gap-3 mt-4">
                           <motion.a
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={isTouchDevice ? {} : { scale: 1.05 }}
                             href={ghRepo.html_url}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -301,7 +306,7 @@ const ProjectsSection = () => {
                           </motion.a>
                           {(getProjectLiveUrl(ghRepo.name) || ghRepo.homepage) && (
                             <motion.a
-                              whileHover={{ scale: 1.05 }}
+                              whileHover={isTouchDevice ? {} : { scale: 1.05 }}
                               href={getProjectLiveUrl(ghRepo.name) || ghRepo.homepage || '#'}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -324,7 +329,7 @@ const ProjectsSection = () => {
                     <motion.div
                       key={featuredProject.id}
                       variants={itemVariants}
-                      whileHover={{ y: -10 }}
+                      whileHover={isTouchDevice ? {} : { y: -10 }}
                       className="glass-card overflow-hidden group hover:neon-glow transition-all duration-500"
                     >
                       <div className="relative overflow-hidden">
@@ -336,14 +341,14 @@ const ProjectsSection = () => {
                         <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                           <div className="flex space-x-4">
                             <motion.a
-                              whileHover={{ scale: 1.1 }}
+                              whileHover={isTouchDevice ? {} : { scale: 1.1 }}
                               href={featuredProject.github}
                               className="p-3 bg-[#00FF94] text-black rounded-full hover:bg-[#00E085] transition-colors"
                             >
                               <Github className="w-5 h-5" />
                             </motion.a>
                             <motion.a
-                              whileHover={{ scale: 1.1 }}
+                              whileHover={isTouchDevice ? {} : { scale: 1.1 }}
                               href={featuredProject.live}
                               className="p-3 bg-white text-black rounded-full hover:bg-gray-200 transition-colors"
                             >

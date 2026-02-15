@@ -17,8 +17,12 @@ const BlogSection = () => {
 
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    // Detect touch device
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     const fetchBlogs = async () => {
       try {
         const response = await fetch('/api/blogs?published=true');
@@ -106,7 +110,7 @@ const BlogSection = () => {
               <Link key={post.id} href={`/blog/${post.id}`}>
                 <motion.article
                   variants={itemVariants}
-                  whileHover={{ y: -10 }}
+                  whileHover={isTouchDevice ? {} : { y: -10 }}
                   className="glass-card overflow-hidden group hover:neon-glow transition-all duration-500 cursor-pointer"
                 >
                   <div className="relative overflow-hidden">
