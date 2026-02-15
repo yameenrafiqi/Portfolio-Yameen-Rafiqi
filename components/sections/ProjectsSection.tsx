@@ -6,7 +6,7 @@ import { useInView } from 'react-intersection-observer';
 import { ExternalLink, Github, Filter, Star, GitFork } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchGitHubRepos, categorizeRepo, getLanguageColor, getProjectImage, getProjectLiveUrl, type GitHubRepo } from '@/lib/github';
-import { filterVisibleProjects } from '@/lib/projectSettings';
+import { type ProjectVisibility } from '@/lib/projectSettings';
 
 const ProjectsSection = () => {
   const [ref, inView] = useInView({
@@ -89,8 +89,21 @@ const ProjectsSection = () => {
       try {
         const repos = await fetchGitHubRepos();
         if (repos && repos.length > 0) {
-          // Filter based on visibility settings
-          const visibleRepos = filterVisibleProjects(repos);
+          // Fetch visibility settings from API
+          const response = await fetch('/api/settings/projects');
+          const data = await response.json();
+          
+          let visibleRepos = repos;
+          if (data.success) {
+            const visibility: ProjectVisibility = data.data.visibility;
+            // Filter based on visibility settings
+            visibleRepos = repos.filter(repo => {
+              const id = String(repo.id);
+              // Default to visible if not set
+              return visibility[id] !== false;
+            });
+          }
+          
           setGithubProjects(visibleRepos);
           setUseGitHub(true);
         } else {

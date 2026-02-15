@@ -9,11 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { fetchGitHubRepos, type GitHubRepo } from '@/lib/github';
-import {
-  getProjectVisibility,
-  saveProjectVisibility,
-  type ProjectVisibility,
-} from '@/lib/projectSettings';
+import { type ProjectVisibility } from '@/lib/projectSettings';
 import { type BlogPost } from '@/lib/blogManagement';
 import { useRouter } from 'next/navigation';
 
@@ -64,7 +60,13 @@ export default function AdminPage() {
     try {
       const repos = await fetchGitHubRepos();
       setProjects(repos);
-      setVisibility(getProjectVisibility());
+      
+      // Fetch visibility settings from API
+      const response = await fetch('/api/settings/projects');
+      const data = await response.json();
+      if (data.success) {
+        setVisibility(data.data.visibility);
+      }
     } catch (err) {
       console.error('Error loading projects:', err);
     } finally {
@@ -223,13 +225,28 @@ export default function AdminPage() {
     setVisibility(newVisibility);
   };
 
-  const handleSave = () => {
-    saveProjectVisibility(visibility);
-    setSaved(true);
-    setTimeout(() => {
-      setSaved(false);
-      window.location.reload();
-    }, 1000);
+  const handleSave = async () => {
+    try {
+      const response = await fetch('/api/settings/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibility }),
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setSaved(true);
+        setTimeout(() => {
+          setSaved(false);
+          window.location.reload();
+        }, 1000);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Error saving project settings:', error);
+      alert('Failed to save project settings');
+    }
   };
 
   const isVisible = (repoId: number) => {
