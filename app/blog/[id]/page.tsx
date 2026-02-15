@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import ScrollProgress from '@/components/ScrollProgress';
 import BackToTop from '@/components/BackToTop';
 import type { BlogPost } from '@/lib/blogManagement';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function BlogDetailPage() {
   const params = useParams();
@@ -210,8 +212,11 @@ export default function BlogDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             className="text-xl leading-relaxed text-gray-300 mb-12 italic border-l-4 border-[#00FF94] pl-6 py-2"
-            dangerouslySetInnerHTML={{ __html: blog.excerpt }}
-          />
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {blog.excerpt}
+            </ReactMarkdown>
+          </motion.div>
 
           {/* Content */}
           <motion.div
@@ -261,8 +266,11 @@ export default function BlogDetailPage() {
               prose-blockquote:pl-6
               prose-blockquote:italic
               prose-blockquote:text-gray-300"
-            dangerouslySetInnerHTML={{ __html: blog.content || blog.excerpt }}
-          />
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {blog.content || blog.excerpt}
+            </ReactMarkdown>
+          </motion.div>
 
           {/* Share Section */}
           <motion.div

@@ -593,7 +593,7 @@ export default function AdminPage() {
                           <Textarea
                             value={blogForm.excerpt}
                             onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
-                            placeholder="Short description (HTML supported: <b>, <i>, <br>, etc.)"
+                            placeholder="Short description (Markdown supported: **bold**, *italic*, etc.)"
                             className="bg-[#0A0A0A] border-gray-600 text-white"
                             rows={2}
                             required
@@ -602,12 +602,12 @@ export default function AdminPage() {
 
                         <div>
                           <label className="text-sm text-gray-400 mb-2 block">
-                            Content <span className="text-xs text-[#00FF94]">(HTML Supported)</span>
+                            Content <span className="text-xs text-[#00FF94]">(Markdown Supported)</span>
                           </label>
                           <Textarea
                             value={blogForm.content}
                             onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
-                            placeholder="Full blog content. You can use HTML tags: <h1>, <h2>, <p>, <br>, <hr>, <b>, <i>, <ul>, <li>, etc."
+                            placeholder="Full blog content. Use Markdown: # Heading, ## Subheading, **bold**, *italic*, - lists, [links](url), etc."
                             className="bg-[#0A0A0A] border-gray-600 text-white"
                             rows={6}
                           />
