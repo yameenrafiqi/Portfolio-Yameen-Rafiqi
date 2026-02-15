@@ -14,9 +14,27 @@ const BlogSection = () => {
   });
 
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setBlogPosts(getPublishedBlogs());
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch('/api/blogs?published=true');
+        const data = await response.json();
+        if (data.success) {
+          setBlogPosts(data.data.map((blog: any) => ({
+            ...blog,
+            id: blog._id,
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchBlogs();
   }, []);
 
   const containerVariants = {
@@ -54,7 +72,16 @@ const BlogSection = () => {
             Latest <span className="gradient-text">Blog Posts</span>
           </motion.h2>
 
-          {blogPosts.length === 0 ? (
+          {loading ? (
+            // Loading State
+            <motion.div
+              variants={itemVariants}
+              className="text-center py-20"
+            >
+              <div className="animate-spin w-12 h-12 border-4 border-[#00FF94] border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-400">Loading blog posts...</p>
+            </motion.div>
+          ) : blogPosts.length === 0 ? (
             // Coming Soon Message
             <motion.div
               variants={itemVariants}
@@ -107,9 +134,10 @@ const BlogSection = () => {
                     {post.title}
                   </h3>
 
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
+                  <div 
+                    className="text-gray-300 text-sm mb-4 line-clamp-3"
+                    dangerouslySetInnerHTML={{ __html: post.excerpt }}
+                  />
 
                   <motion.div
                     whileHover={{ x: 5 }}

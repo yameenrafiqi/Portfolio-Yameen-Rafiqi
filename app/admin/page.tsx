@@ -14,14 +14,7 @@ import {
   saveProjectVisibility,
   type ProjectVisibility,
 } from '@/lib/projectSettings';
-import {
-  getAllBlogs,
-  addBlog,
-  updateBlog,
-  deleteBlog,
-  toggleBlogPublished,
-  type BlogPost,
-} from '@/lib/blogManagement';
+import { type BlogPost } from '@/lib/blogManagement';
 import { useRouter } from 'next/navigation';
 
 type TabType = 'projects' | 'blogs';
@@ -79,29 +72,61 @@ export default function AdminPage() {
     }
   };
 
-  const loadBlogs = () => {
-    setBlogs(getAllBlogs());
+  const loadBlogs = async () => {
+    try {
+      const response = await fetch('/api/blogs');
+      const data = await response.json();
+      if (data.success) {
+        setBlogs(data.data.map((blog: any) => ({
+          ...blog,
+          id: blog._id,
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading blogs:', error);
+    }
   };
 
-  const handleBlogSubmit = (e: React.FormEvent) => {
+  const handleBlogSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editingBlog) {
-      updateBlog(editingBlog.id, {
-        ...blogForm,
-        date: editingBlog.date,
-      });
-    } else {
-      addBlog({
-        ...blogForm,
-        date: new Date().toISOString().split('T')[0],
-      });
+    try {
+      if (editingBlog) {
+        const response = await fetch(`/api/blogs/${editingBlog.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...blogForm,
+            date: editingBlog.date,
+          }),
+        });
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.error);
+        }
+      } else {
+        const response = await fetch('/api/blogs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...blogForm,
+            date: new Date().toISOString().split('T')[0],
+          }),
+        });
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.error);
+        }
+      }
+      
+      await loadBlogs();
+      resetBlogForm();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      console.error('Error saving blog:', error);
+      alert('Failed to save blog post');
     }
-    
-    loadBlogs();
-    resetBlogForm();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
   };
 
   const resetBlogForm = () => {
@@ -132,16 +157,40 @@ export default function AdminPage() {
     setShowBlogForm(true);
   };
 
-  const handleDeleteBlog = (id: string) => {
+  const handleDeleteBlog = async (id: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
-      deleteBlog(id);
-      loadBlogs();
+      try {
+        const response = await fetch(`/api/blogs/${id}`, {
+          method: 'DELETE',
+        });
+        const data = await response.json();
+        if (data.success) {
+          await loadBlogs();
+        } else {
+          throw new Error(data.error);
+        }
+      } catch (error) {
+        console.error('Error deleting blog:', error);
+        alert('Failed to delete blog post');
+      }
     }
   };
 
-  const handleToggleBlogPublished = (id: string) => {
-    toggleBlogPublished(id);
-    loadBlogs();
+  const handleToggleBlogPublished = async (id: string) => {
+    try {
+      const response = await fetch(`/api/blogs/${id}/toggle`, {
+        method: 'PATCH',
+      });
+      const data = await response.json();
+      if (data.success) {
+        await loadBlogs();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Error toggling blog status:', error);
+      alert('Failed to toggle blog status');
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -483,7 +532,7 @@ export default function AdminPage() {
                           <Textarea
                             value={blogForm.excerpt}
                             onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
-                            placeholder="Short description"
+                            placeholder="Short description (HTML supported: <b>, <i>, <br>, etc.)"
                             className="bg-[#0A0A0A] border-gray-600 text-white"
                             rows={2}
                             required
@@ -491,11 +540,13 @@ export default function AdminPage() {
                         </div>
 
                         <div>
-                          <label className="text-sm text-gray-400 mb-2 block">Content</label>
+                          <label className="text-sm text-gray-400 mb-2 block">
+                            Content <span className="text-xs text-[#00FF94]">(HTML Supported)</span>
+                          </label>
                           <Textarea
                             value={blogForm.content}
                             onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
-                            placeholder="Full blog content (Markdown supported)"
+                            placeholder="Full blog content. You can use HTML tags: <h1>, <h2>, <p>, <br>, <hr>, <b>, <i>, <ul>, <li>, etc."
                             className="bg-[#0A0A0A] border-gray-600 text-white"
                             rows={6}
                           />
@@ -591,7 +642,10 @@ export default function AdminPage() {
                                 {blog.category}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-400 mb-2">{blog.excerpt}</p>
+                            <div 
+                              className="text-sm text-gray-400 mb-2"
+                              dangerouslySetInnerHTML={{ __html: blog.excerpt }}
+                            />
                             <div className="flex items-center gap-4 text-xs text-gray-500">
                               <span>{blog.date}</span>
                               <span>{blog.readTime}</span>
