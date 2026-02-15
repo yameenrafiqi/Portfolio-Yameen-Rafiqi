@@ -40,8 +40,58 @@ export default function BlogDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] text-white flex items-center justify-center">
-        <div className="animate-spin w-12 h-12 border-4 border-[#00FF94] border-t-transparent rounded-full"></div>
+      <div className="min-h-screen bg-[#0A0A0A] text-white">
+        <ScrollProgress />
+        
+        {/* Header Skeleton */}
+        <div className="fixed top-0 left-0 right-0 z-50 glass-card backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="h-10 w-40 bg-gray-800 rounded animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="pt-24 pb-20">
+          <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Image Skeleton */}
+            <div className="mb-8 rounded-2xl overflow-hidden bg-gray-800 h-[400px] animate-pulse"></div>
+
+            {/* Category Skeleton */}
+            <div className="mb-6">
+              <div className="h-8 w-24 bg-gray-800 rounded-full animate-pulse"></div>
+            </div>
+
+            {/* Title Skeleton */}
+            <div className="mb-6 space-y-3">
+              <div className="h-12 bg-gray-800 rounded animate-pulse"></div>
+              <div className="h-12 bg-gray-800 rounded w-3/4 animate-pulse"></div>
+            </div>
+
+            {/* Meta Skeleton */}
+            <div className="flex items-center gap-6 mb-8 pb-8 border-b border-gray-700">
+              <div className="h-5 w-32 bg-gray-800 rounded animate-pulse"></div>
+              <div className="h-5 w-24 bg-gray-800 rounded animate-pulse"></div>
+            </div>
+
+            {/* Excerpt Skeleton */}
+            <div className="mb-8 p-6 glass-card rounded-xl border-l-4 border-gray-700 space-y-3">
+              <div className="h-6 bg-gray-800 rounded animate-pulse"></div>
+              <div className="h-6 bg-gray-800 rounded animate-pulse"></div>
+              <div className="h-6 bg-gray-800 rounded w-2/3 animate-pulse"></div>
+            </div>
+
+            {/* Content Skeleton */}
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-4 bg-gray-800 rounded animate-pulse"></div>
+                  <div className="h-4 bg-gray-800 rounded animate-pulse"></div>
+                  <div className="h-4 bg-gray-800 rounded w-5/6 animate-pulse"></div>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
       </div>
     );
   }

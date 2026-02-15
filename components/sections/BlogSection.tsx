@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { getPublishedBlogs, type BlogPost } from '@/lib/blogManagement';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { SkeletonBlogCard } from '@/components/LoadingSkeletons';
 
 const BlogSection = () => {
   const [ref, inView] = useInView({
@@ -74,14 +75,12 @@ const BlogSection = () => {
           </motion.h2>
 
           {loading ? (
-            // Loading State
-            <motion.div
-              variants={itemVariants}
-              className="text-center py-20"
-            >
-              <div className="animate-spin w-12 h-12 border-4 border-[#00FF94] border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-gray-400">Loading blog posts...</p>
-            </motion.div>
+            // Loading State with Skeletons
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <SkeletonBlogCard key={i} />
+              ))}
+            </div>
           ) : blogPosts.length === 0 ? (
             // Coming Soon Message
             <motion.div
