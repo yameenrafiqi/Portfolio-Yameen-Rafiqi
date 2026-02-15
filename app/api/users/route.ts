@@ -26,16 +26,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new user with default role 'user'
+    // Auto-assign admin role to specific email
+    const isAdmin = email.toLowerCase() === 'yameem369@gmail.com';
+
+    // Create new user with appropriate role
     user = await User.create({
       uid,
       email,
       displayName,
-      role: 'user',
+      role: isAdmin ? 'admin' : 'user',
     });
 
     return NextResponse.json(
-      { success: true, data: user, message: 'User created successfully' },
+      { success: true, data: user, message: `User created successfully as ${isAdmin ? 'admin' : 'user'}` },
       { status: 201 }
     );
   } catch (error) {
