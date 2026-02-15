@@ -54,9 +54,9 @@ export default function BlogDetailPage() {
 
         {/* Content Skeleton */}
         <div className="pt-24 pb-20">
-          <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Image Skeleton */}
-            <div className="mb-8 rounded-2xl overflow-hidden bg-gray-800 h-[400px] animate-pulse"></div>
+            <div className="mb-8 rounded-2xl overflow-hidden bg-gray-800 h-[500px] animate-pulse"></div>
 
             {/* Category Skeleton */}
             <div className="mb-6">
@@ -137,7 +137,7 @@ export default function BlogDetailPage() {
 
       {/* Content */}
       <div className="pt-24 pb-20">
-        <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Featured Image */}
           {blog.image && (
             <motion.div
@@ -148,7 +148,7 @@ export default function BlogDetailPage() {
               <img
                 src={blog.image}
                 alt={blog.title}
-                className="w-full h-[400px] object-cover"
+                className="w-full h-[500px] object-cover"
               />
             </motion.div>
           )}
