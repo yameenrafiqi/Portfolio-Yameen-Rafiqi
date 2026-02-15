@@ -42,6 +42,7 @@ export default function AdminPage() {
     category: '',
     published: true,
   });
+  const [imagePreview, setImagePreview] = useState<string>('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -144,6 +145,32 @@ export default function AdminPage() {
     });
     setEditingBlog(null);
     setShowBlogForm(false);
+    setImagePreview('');
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setBlogForm({ ...blogForm, image: base64String });
+        setImagePreview(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleEditBlog = (blog: BlogPost) => {
@@ -157,6 +184,7 @@ export default function AdminPage() {
       category: blog.category,
       published: blog.published,
     });
+    setImagePreview(blog.image);
     setShowBlogForm(true);
   };
 
@@ -586,17 +614,70 @@ export default function AdminPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-sm text-gray-400 mb-2 block">Image URL</label>
-                            <Input
-                              value={blogForm.image}
-                              onChange={(e) => setBlogForm({ ...blogForm, image: e.target.value })}
-                              placeholder="https://..."
-                              className="bg-[#0A0A0A] border-gray-600 text-white"
-                            />
+                          <div className="col-span-2">
+                            <label className="text-sm text-gray-400 mb-2 block">Image</label>
+                            <div className="space-y-3">
+                              {/* File Upload */}
+                              <div>
+                                <label
+                                  htmlFor="imageUpload"
+                                  className="block w-full px-4 py-3 bg-[#0A0A0A] border-2 border-dashed border-gray-600 rounded-lg cursor-pointer hover:border-[#00FF94] transition-colors text-center"
+                                >
+                                  <span className="text-gray-400">
+                                    📁 Upload Image (JPG, PNG, WebP - Max 5MB)
+                                  </span>
+                                  <input
+                                    id="imageUpload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    className="hidden"
+                                  />
+                                </label>
+                              </div>
+
+                              {/* OR Divider */}
+                              <div className="flex items-center gap-3">
+                                <div className="flex-1 h-px bg-gray-700"></div>
+                                <span className="text-xs text-gray-500">OR</span>
+                                <div className="flex-1 h-px bg-gray-700"></div>
+                              </div>
+
+                              {/* URL Input */}
+                              <Input
+                                value={blogForm.image.startsWith('data:') ? '' : blogForm.image}
+                                onChange={(e) => {
+                                  setBlogForm({ ...blogForm, image: e.target.value });
+                                  setImagePreview(e.target.value);
+                                }}
+                                placeholder="🔗 Or paste image URL (https://...)"
+                                className="bg-[#0A0A0A] border-gray-600 text-white"
+                              />
+
+                              {/* Image Preview */}
+                              {(imagePreview || blogForm.image) && (
+                                <div className="relative mt-3">
+                                  <img
+                                    src={imagePreview || blogForm.image}
+                                    alt="Preview"
+                                    className="w-full h-48 object-cover rounded-lg border border-gray-600"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setBlogForm({ ...blogForm, image: '' });
+                                      setImagePreview('');
+                                    }}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
 
-                          <div>
+                          <div className="col-span-2">
                             <label className="text-sm text-gray-400 mb-2 block">Read Time</label>
                             <Input
                               value={blogForm.readTime}
