@@ -13,6 +13,16 @@ export interface BlogPost {
   readTime: string;
   category: string;
   published: boolean;
+  status?: 'draft' | 'pending' | 'approved' | 'rejected';
+  author?: {
+    uid: string;
+    email: string;
+    displayName: string;
+  };
+  submittedAt?: Date | string;
+  reviewedAt?: Date | string;
+  reviewedBy?: string;
+  rejectionReason?: string;
 }
 
 const BLOG_STORAGE_KEY = 'portfolio_blogs';

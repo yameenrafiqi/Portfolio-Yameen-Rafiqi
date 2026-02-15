@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Eye, EyeOff, Save, LogOut, Shield, Plus, Trash2, Edit, FolderKanban, Newspaper, Activity } from 'lucide-react';
+import { Lock, Eye, EyeOff, Save, LogOut, Shield, Plus, Trash2, Edit, FolderKanban, Newspaper, Activity, CheckCircle, XCircle, Bell } from 'lucide-react';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { type BlogPost } from '@/lib/blogManagement';
 import { useRouter } from 'next/navigation';
 import WebVitalsMonitor from '@/components/WebVitalsMonitor';
 
-type TabType = 'projects' | 'blogs' | 'vitals';
+type TabType = 'projects' | 'blogs' | 'pending' | 'vitals';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -44,13 +44,21 @@ export default function AdminPage() {
   });
   const [imagePreview, setImagePreview] = useState<string>('');
 
+  // Pending posts states
+  const [pendingPosts, setPendingPosts] = useState<BlogPost[]>([]);
+  const [rejectionReason, setRejectionReason] = useState<string>('');
+  const [selectedPostForRejection, setSelectedPostForRejection] = useState<string | null>(null);
+  const [userUid, setUserUid] = useState<string>('');
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setAuthenticated(!!user);
       setLoading(false);
       if (user) {
+        setUserUid(user.uid);
         loadProjects();
         loadBlogs();
+        loadPendingPosts(user.uid);
       }
     });
 
@@ -91,10 +99,99 @@ export default function AdminPage() {
     }
   };
 
+  const loadPendingPosts = async (uid: string) => {
+    try {
+      const response = await fetch(`/api/blogs/approval?uid=${uid}&status=pending`);
+      const data = await response.json();
+      if (data.success) {
+        setPendingPosts(data.data.map((post: any) => ({
+          ...post,
+          id: post._id,
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading pending posts:', error);
+    }
+  };
+
+  const handleApprovePost = async (postId: string) => {
+    try {
+      const response = await fetch('/api/blogs/approval', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId,
+          action: 'approve',
+          uid: userUid,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Reload pending posts and blogs
+        await loadPendingPosts(userUid);
+        await loadBlogs();
+        alert('Post approved and published successfully!');
+      }
+    } catch (error) {
+      console.error('Error approving post:', error);
+      alert('Failed to approve post');
+    }
+  };
+
+  const handleRejectPost = async (postId: string) => {
+    if (!rejectionReason.trim()) {
+      alert('Please provide a rejection reason');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/blogs/approval', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId,
+          action: 'reject',
+          uid: userUid,
+          rejectionReason,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Reload pending posts
+        await loadPendingPosts(userUid);
+        setSelectedPostForRejection(null);
+        setRejectionReason('');
+        alert('Post rejected');
+      }
+    } catch (error) {
+      console.error('Error rejecting post:', error);
+      alert('Failed to reject post');
+    }
+  };
+
   const handleBlogSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
+      const user = auth.currentUser;
+      if (!user) {
+        alert('You must be logged in to create posts');
+        return;
+      }
+
+      // Get or create user in database
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email?.split('@')[0] || 'Admin',
+        }),
+      });
+
       if (editingBlog) {
         const response = await fetch(`/api/blogs/${editingBlog.id}`, {
           method: 'PUT',
@@ -115,6 +212,12 @@ export default function AdminPage() {
           body: JSON.stringify({
             ...blogForm,
             date: new Date().toISOString().split('T')[0],
+            status: blogForm.published ? 'approved' : 'draft',
+            author: {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName || user.email?.split('@')[0] || 'Admin',
+            },
           }),
         });
         const data = await response.json();
@@ -428,6 +531,22 @@ export default function AdminPage() {
                 >
                   <Newspaper className="w-4 h-4" />
                   Blogs
+                </button>
+                <button
+                  onClick={() => setActiveTab('pending')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors relative ${
+                    activeTab === 'pending'
+                      ? 'bg-[#00FF94] text-black font-semibold'
+                      : 'bg-[#1A1A1A] text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Bell className="w-4 h-4" />
+                  Pending Posts
+                  {pendingPosts.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {pendingPosts.length}
+                    </span>
+                  )}
                 </button>
                 <button
                   onClick={() => setActiveTab('vitals')}
@@ -800,6 +919,130 @@ export default function AdminPage() {
                       <div className="text-center py-12 text-gray-400">
                         <Newspaper className="w-12 h-12 mx-auto mb-3 opacity-50" />
                         <p>No blog posts yet. Create your first post!</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : activeTab === 'pending' ? (
+                // Pending Posts Tab
+                <>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold">Pending Posts</h2>
+                    <p className="text-sm text-gray-400">
+                      {pendingPosts.length} post{pendingPosts.length !== 1 ? 's' : ''} awaiting approval
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    {pendingPosts.map((post) => (
+                      <motion.div
+                        key={post.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-6 bg-[#1A1A1A] rounded-lg border border-yellow-500/30"
+                      >
+                        <div className="flex gap-6">
+                          {/* Post Image */}
+                          <div className="w-48 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800">
+                            <img
+                              src={post.image}
+                              alt={post.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          {/* Post Details */}
+                          <div className="flex-1">
+                            <div className="mb-3">
+                              <h3 className="text-xl font-semibold mb-1">{post.title}</h3>
+                              <p className="text-gray-400 text-sm mb-2">{post.excerpt}</p>
+                              <div className="flex items-center gap-3 text-xs text-gray-500">
+                                <span>By: {post.author?.displayName || 'Unknown'}</span>
+                                <span>•</span>
+                                <span>{post.author?.email || 'No email'}</span>
+                                <span>•</span>
+                                <span>Submitted: {post.submittedAt ? new Date(post.submittedAt).toLocaleString() : 'N/A'}</span>
+                              </div>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">
+                                  {post.category}
+                                </span>
+                                <span className="text-xs px-2 py-1 rounded bg-gray-600/20 text-gray-400">
+                                  {post.readTime}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center gap-3">
+                              <Button
+                                onClick={() => handleApprovePost(post.id!)}
+                                className="bg-green-500 text-white hover:bg-green-600"
+                                size="sm"
+                              >
+                                <CheckCircle className="w-4 h-4 mr-2" />
+                                Approve & Publish
+                              </Button>
+                              <Button
+                                onClick={() => setSelectedPostForRejection(post.id!)}
+                                variant="outline"
+                                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                size="sm"
+                              >
+                                <XCircle className="w-4 h-4 mr-2" />
+                                Reject
+                              </Button>
+                            </div>
+
+                            {/* Rejection Reason Input */}
+                            {selectedPostForRejection === post.id && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+                              >
+                                <label className="text-sm text-gray-400 mb-2 block">
+                                  Rejection Reason (will be sent to author):
+                                </label>
+                                <Textarea
+                                  value={rejectionReason}
+                                  onChange={(e) => setRejectionReason(e.target.value)}
+                                  placeholder="Please provide feedback on why this post is being rejected..."
+                                  className="bg-[#111] border-gray-600 mb-3"
+                                  rows={3}
+                                />
+                                <div className="flex gap-2">
+                                  <Button
+                                    onClick={() => handleRejectPost(post.id!)}
+                                    className="bg-red-500 text-white hover:bg-red-600"
+                                    size="sm"
+                                  >
+                                    Confirm Rejection
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      setSelectedPostForRejection(null);
+                                      setRejectionReason('');
+                                    }}
+                                    variant="outline"
+                                    className="border-gray-600"
+                                    size="sm"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </motion.div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+
+                    {pendingPosts.length === 0 && (
+                      <div className="text-center py-12 text-gray-400">
+                        <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <p>No pending posts to review</p>
+                        <p className="text-sm mt-2">New submissions will appear here for your approval</p>
                       </div>
                     )}
                   </div>

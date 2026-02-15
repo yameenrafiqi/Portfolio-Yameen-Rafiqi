@@ -10,6 +10,16 @@ export interface IBlogPost {
   readTime: string;
   category: string;
   published: boolean;
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  author?: {
+    uid: string;
+    email: string;
+    displayName: string;
+  };
+  submittedAt?: Date;
+  reviewedAt?: Date;
+  reviewedBy?: string;
+  rejectionReason?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -41,6 +51,28 @@ const blogPostSchema = new mongoose.Schema<IBlogPost>(
     readTime: {
       type: String,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ['draft', 'pending', 'approved', 'rejected'],
+      default: 'draft',
+    },
+    author: {
+      uid: { type: String },
+      email: { type: String },
+      displayName: { type: String },
+    },
+    submittedAt: {
+      type: Date,
+    },
+    reviewedAt: {
+      type: Date,
+    },
+    reviewedBy: {
+      type: String,
+    },
+    rejectionReason: {
+      type: String,
     },
     category: {
       type: String,

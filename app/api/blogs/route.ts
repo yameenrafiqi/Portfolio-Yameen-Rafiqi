@@ -9,8 +9,27 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const publishedOnly = searchParams.get('published') === 'true';
+    const uid = searchParams.get('uid');
+    const status = searchParams.get('status');
 
-    const query = publishedOnly ? { published: true } : {};
+    let query: any = {};
+
+    // If published filter is requested
+    if (publishedOnly) {
+      query.published = true;
+      query.status = 'approved';
+    }
+
+    // If specific user's posts are requested
+    if (uid) {
+      query['author.uid'] = uid;
+    }
+
+    // If specific status is requested
+    if (status) {
+      query.status = status;
+    }
+
     const blogs = await BlogPost.find(query).sort({ createdAt: -1 });
 
     return NextResponse.json({ success: true, data: blogs });
