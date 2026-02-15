@@ -51,8 +51,29 @@ export default function SignUpPage() {
         }
       } else {
         // Sign in
-        await signInWithEmailAndPassword(auth, email, password);
-        router.push('/write');
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Check if user exists in MongoDB, if not create them
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || email.split('@')[0],
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success || data.error?.includes('already exists')) {
+          // Success or user already exists - both are fine
+          toast.success('Signed in successfully!');
+          router.push('/write');
+        } else {
+          toast.error('Sign in successful but failed to sync user data');
+          router.push('/write');
+        }
       }
     } catch (err: any) {
       console.error('Auth error:', err);
