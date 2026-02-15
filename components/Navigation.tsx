@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Calendar, Shield } from 'lucide-react';
+import Link from 'next/link';
 import BookingCalendar from './BookingCalendar';
-import AdminPanel from './AdminPanel';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   const navItems = [
     { name: 'Home', href: '#home' },
@@ -67,24 +66,20 @@ const Navigation = () => {
               <span className="text-sm font-medium">Book a meeting</span>
             </motion.button>
             
-            <motion.button
-              onClick={() => setIsAdminOpen(true)}
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center gap-2 text-gray-300 hover:text-[#00FF94] transition-colors duration-200"
-              title="Admin Panel"
-            >
-              <Shield size={18} />
-              <span className="text-sm font-medium hidden lg:inline">Admin</span>
-            </motion.button>
+            <Link href="/admin">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2 text-gray-300 hover:text-[#00FF94] transition-colors duration-200"
+                title="Admin Panel"
+              >
+                <Shield size={18} />
+                <span className="text-sm font-medium hidden lg:inline">Admin</span>
+              </motion.button>
+            </Link>
             
             <BookingCalendar 
               isOpen={isCalendarOpen} 
               onClose={() => setIsCalendarOpen(false)} 
-            />
-            
-            <AdminPanel
-              isOpen={isAdminOpen}
-              onClose={() => setIsAdminOpen(false)}
             />
           </div>
 
