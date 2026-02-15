@@ -114,6 +114,7 @@ const ContactSection = () => {
                     { icon: <Github className="w-6 h-6" />, href: 'https://github.com/yameenrafiqi', label: 'GitHub' },
                     { icon: <Linkedin className="w-6 h-6" />, href: 'https://www.linkedin.com/in/yameen-rafiqi-564a35283/', label: 'LinkedIn' },
                     { icon: <Twitter className="w-6 h-6" />, href: 'https://x.com/rafiqi_yameen', label: 'Twitter' },
+                    { icon: <Mail className="w-6 h-6" />, href: 'mailto:yameem369@gmail.com', label: 'Email' },
                   ].map((social) => (
                     <motion.a
                       key={social.label}
