@@ -6,6 +6,7 @@ import { Calendar, Clock, ArrowRight, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getPublishedBlogs, type BlogPost } from '@/lib/blogManagement';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const BlogSection = () => {
   const [ref, inView] = useInView({
@@ -103,51 +104,52 @@ const BlogSection = () => {
             <>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {blogPosts.map((post) => (
-              <motion.article
-                key={post.id}
-                variants={itemVariants}
-                whileHover={{ y: -10 }}
-                className="glass-card overflow-hidden group hover:neon-glow transition-all duration-500"
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-[#00FF94] text-black text-xs font-semibold rounded-full">
-                      {post.category}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-400 mb-3">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span>{new Date(post.date).toLocaleDateString()}</span>
-                    <Clock className="w-4 h-4 ml-4 mr-2" />
-                    <span>{post.readTime}</span>
+              <Link key={post.id} href={`/blog/${post.id}`}>
+                <motion.article
+                  variants={itemVariants}
+                  whileHover={{ y: -10 }}
+                  className="glass-card overflow-hidden group hover:neon-glow transition-all duration-500 cursor-pointer"
+                >
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-[#00FF94] text-black text-xs font-semibold rounded-full">
+                        {post.category}
+                      </span>
+                    </div>
                   </div>
 
-                  <h3 className="text-xl font-semibold mb-3 group-hover:text-[#00FF94] transition-colors">
-                    {post.title}
-                  </h3>
+                  <div className="p-6">
+                    <div className="flex items-center text-sm text-gray-400 mb-3">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      <span>{new Date(post.date).toLocaleDateString()}</span>
+                      <Clock className="w-4 h-4 ml-4 mr-2" />
+                      <span>{post.readTime}</span>
+                    </div>
 
-                  <div 
-                    className="text-gray-300 text-sm mb-4 line-clamp-3"
-                    dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                  />
+                    <h3 className="text-xl font-semibold mb-3 group-hover:text-[#00FF94] transition-colors">
+                      {post.title}
+                    </h3>
 
-                  <motion.div
-                    whileHover={{ x: 5 }}
-                    className="flex items-center text-[#00FF94] text-sm font-semibold cursor-pointer"
-                  >
-                    Read More
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </motion.div>
-                </div>
-              </motion.article>
+                    <div 
+                      className="text-gray-300 text-sm mb-4 line-clamp-3"
+                      dangerouslySetInnerHTML={{ __html: post.excerpt }}
+                    />
+
+                    <motion.div
+                      whileHover={{ x: 5 }}
+                      className="flex items-center text-[#00FF94] text-sm font-semibold"
+                    >
+                      Read More
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </motion.div>
+                  </div>
+                </motion.article>
+              </Link>
             ))}
           </div>
 

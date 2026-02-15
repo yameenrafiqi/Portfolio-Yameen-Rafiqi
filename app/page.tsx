@@ -2,6 +2,8 @@
 
 import { Suspense } from 'react';
 import ParticleBackground from '@/components/ParticleBackground';
+import ScrollProgress from '@/components/ScrollProgress';
+import BackToTop from '@/components/BackToTop';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/sections/HeroSection';
 import AboutSection from '@/components/sections/AboutSection';
@@ -15,6 +17,8 @@ import Footer from '@/components/Footer';
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-white">
+      <ScrollProgress />
+      
       <Suspense fallback={<div />}>
         <ParticleBackground />
       </Suspense>
@@ -31,6 +35,8 @@ export default function Home() {
         <ContactSection />
         <Footer />
       </div>
+      
+      <BackToTop />
     </main>
   );
 }

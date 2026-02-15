@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Eye, EyeOff, Save, LogOut, Shield, Plus, Trash2, Edit, FolderKanban, Newspaper } from 'lucide-react';
+import { Lock, Eye, EyeOff, Save, LogOut, Shield, Plus, Trash2, Edit, FolderKanban, Newspaper, Activity } from 'lucide-react';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,9 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/lib/github';
 import { type ProjectVisibility } from '@/lib/projectSettings';
 import { type BlogPost } from '@/lib/blogManagement';
 import { useRouter } from 'next/navigation';
+import WebVitalsMonitor from '@/components/WebVitalsMonitor';
 
-type TabType = 'projects' | 'blogs';
+type TabType = 'projects' | 'blogs' | 'vitals';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -350,7 +351,11 @@ export default function AdminPage() {
                   <div>
                     <h1 className="text-2xl font-bold">Admin Dashboard</h1>
                     <p className="text-sm text-gray-400">
-                      {activeTab === 'projects' ? 'Manage project visibility' : 'Manage blog posts'}
+                      {activeTab === 'projects' 
+                        ? 'Manage project visibility' 
+                        : activeTab === 'blogs' 
+                        ? 'Manage blog posts' 
+                        : 'Monitor performance metrics'}
                     </p>
                   </div>
                 </div>
@@ -395,6 +400,17 @@ export default function AdminPage() {
                 >
                   <Newspaper className="w-4 h-4" />
                   Blogs
+                </button>
+                <button
+                  onClick={() => setActiveTab('vitals')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    activeTab === 'vitals'
+                      ? 'bg-[#00FF94] text-black font-semibold'
+                      : 'bg-[#1A1A1A] text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Activity className="w-4 h-4" />
+                  Web Vitals
                 </button>
               </div>
             </div>
@@ -501,7 +517,7 @@ export default function AdminPage() {
                     </div>
                   )}
                 </>
-              ) : (
+              ) : activeTab === 'blogs' ? (
                 // Blogs Tab
                 <>
                   <div className="flex items-center justify-between mb-6">
@@ -707,6 +723,9 @@ export default function AdminPage() {
                     )}
                   </div>
                 </>
+              ) : (
+                // Web Vitals Tab
+                <WebVitalsMonitor />
               )}
             </div>
           </motion.div>
