@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://yameenrafiqi.com'),
@@ -107,6 +108,17 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <Toaster 
+          position="top-center"
+          richColors
+          toastOptions={{
+            style: {
+              background: '#1A1A1A',
+              border: '1px solid rgba(0, 255, 148, 0.3)',
+              color: '#fff',
+            },
+          }}
+        />
         
         {/* Load Google Calendar script asynchronously after page load */}
         <Script

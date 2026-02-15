@@ -13,6 +13,7 @@ import { type ProjectVisibility } from '@/lib/projectSettings';
 import { type BlogPost } from '@/lib/blogManagement';
 import { useRouter } from 'next/navigation';
 import WebVitalsMonitor from '@/components/WebVitalsMonitor';
+import { toast } from 'sonner';
 
 type TabType = 'projects' | 'blogs' | 'pending' | 'vitals';
 
@@ -131,17 +132,17 @@ export default function AdminPage() {
         // Reload pending posts and blogs
         await loadPendingPosts(userUid);
         await loadBlogs();
-        alert('Post approved and published successfully!');
+        toast.success('Post approved and published successfully!');
       }
     } catch (error) {
       console.error('Error approving post:', error);
-      alert('Failed to approve post');
+      toast.error('Failed to approve post');
     }
   };
 
   const handleRejectPost = async (postId: string) => {
     if (!rejectionReason.trim()) {
-      alert('Please provide a rejection reason');
+      toast.error('Please provide a rejection reason');
       return;
     }
 
@@ -163,11 +164,11 @@ export default function AdminPage() {
         await loadPendingPosts(userUid);
         setSelectedPostForRejection(null);
         setRejectionReason('');
-        alert('Post rejected');
+        toast.success('Post rejected');
       }
     } catch (error) {
       console.error('Error rejecting post:', error);
-      alert('Failed to reject post');
+      toast.error('Failed to reject post');
     }
   };
 
@@ -177,7 +178,7 @@ export default function AdminPage() {
     try {
       const user = auth.currentUser;
       if (!user) {
-        alert('You must be logged in to create posts');
+        toast.error('You must be logged in to create posts');
         return;
       }
 
@@ -232,7 +233,7 @@ export default function AdminPage() {
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
       console.error('Error saving blog:', error);
-      alert('Failed to save blog post');
+      toast.error('Failed to save blog post');
     }
   };
 
@@ -256,13 +257,13 @@ export default function AdminPage() {
     if (file) {
       // Check file size (limit to 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        toast.error('Image size should be less than 5MB');
         return;
       }
 
       // Check file type
       if (!file.type.startsWith('image/')) {
-        alert('Please upload an image file');
+        toast.error('Please upload an image file');
         return;
       }
 
@@ -305,7 +306,7 @@ export default function AdminPage() {
         }
       } catch (error) {
         console.error('Error deleting blog:', error);
-        alert('Failed to delete blog post');
+        toast.error('Failed to delete blog post');
       }
     }
   };
@@ -323,7 +324,7 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error toggling blog status:', error);
-      alert('Failed to toggle blog status');
+      toast.error('Failed to toggle blog status');
     }
   };
 
@@ -377,7 +378,7 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error saving project settings:', error);
-      alert('Failed to save project settings');
+      toast.error('Failed to save project settings');
     }
   };
 

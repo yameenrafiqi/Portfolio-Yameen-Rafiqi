@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Pencil, Send, LogOut, ArrowLeft, Image as ImageIcon, X, Eye, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function WritePage() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function WritePage() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        toast.error('Image size should be less than 5MB');
         return;
       }
 
@@ -118,7 +119,7 @@ export default function WritePage() {
 
         const approvalData = await approvalResponse.json();
         if (approvalData.success) {
-          alert('Post submitted for approval! You will be notified once it is reviewed.');
+          toast.success('Post submitted for approval! You will be notified once it is reviewed.');
           setShowForm(false);
           resetForm();
           await loadUserPosts(userUid);
@@ -126,7 +127,7 @@ export default function WritePage() {
       }
     } catch (error) {
       console.error('Error submitting post:', error);
-      alert('Failed to submit post');
+      toast.error('Failed to submit post. Please try again.');
     } finally {
       setSubmitting(false);
     }

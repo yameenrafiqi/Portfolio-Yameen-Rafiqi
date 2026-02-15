@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { UserPlus, LogIn, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function SignUpPage() {
 
         const data = await response.json();
         if (data.success) {
-          alert('Account created successfully! Redirecting to write page...');
+          toast.success('Account created successfully! Redirecting to write page...');
           router.push('/write');
         } else {
           setError(data.error || 'Failed to register user');
