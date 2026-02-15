@@ -211,11 +211,9 @@ export default function BlogDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-xl leading-relaxed text-gray-300 mb-12 italic border-l-4 border-[#00FF94] pl-6 py-2"
+            className="text-xl leading-relaxed text-gray-300 mb-12 italic border-l-4 border-[#00FF94] pl-6 py-2 article-excerpt"
           >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {blog.excerpt}
-            </ReactMarkdown>
+            {blog.excerpt}
           </motion.div>
 
           {/* Content */}
@@ -223,49 +221,7 @@ export default function BlogDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="prose prose-invert prose-xl max-w-none 
-              prose-headings:text-white 
-              prose-headings:font-bold 
-              prose-headings:mb-6
-              prose-headings:mt-12
-              prose-h1:text-4xl
-              prose-h2:text-3xl
-              prose-h3:text-2xl
-              prose-p:text-gray-200
-              prose-p:leading-relaxed
-              prose-p:mb-6
-              prose-p:text-lg
-              prose-a:text-[#00FF94] 
-              prose-a:no-underline 
-              prose-a:hover:underline
-              prose-strong:text-white
-              prose-strong:font-bold
-              prose-em:text-gray-300
-              prose-code:text-[#00FF94]
-              prose-code:bg-gray-800
-              prose-code:px-2
-              prose-code:py-1
-              prose-code:rounded
-              prose-pre:bg-gray-800
-              prose-pre:border
-              prose-pre:border-gray-700
-              prose-pre:p-4
-              prose-img:rounded-lg
-              prose-img:my-8
-              prose-hr:border-gray-700
-              prose-hr:my-8
-              prose-ul:text-gray-200
-              prose-ul:text-lg
-              prose-ul:my-6
-              prose-ol:text-gray-200
-              prose-ol:text-lg
-              prose-ol:my-6
-              prose-li:mb-2
-              prose-blockquote:border-l-4
-              prose-blockquote:border-[#00FF94]
-              prose-blockquote:pl-6
-              prose-blockquote:italic
-              prose-blockquote:text-gray-300"
+            className="article-content"
           >
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {blog.content || blog.excerpt}

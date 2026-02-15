@@ -379,6 +379,129 @@ img {
   will-change: opacity;
 }
 
+/* Article Content Styling for Markdown */
+.article-content {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-size: 18px;
+  color: #e5e5e5;
+}
+
+/* Main title */
+.article-content h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+/* Section headers */
+.article-content h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-top: 50px;
+  margin-bottom: 15px;
+}
+
+/* Sub-section headers */
+.article-content h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+
+/* Paragraph spacing */
+.article-content p {
+  margin-bottom: 20px;
+}
+
+/* Lists */
+.article-content ul {
+  margin-bottom: 25px;
+  padding-left: 25px;
+}
+
+.article-content ol {
+  margin-bottom: 25px;
+  padding-left: 25px;
+}
+
+.article-content li {
+  margin-bottom: 10px;
+}
+
+/* Horizontal line */
+.article-content hr {
+  border: none;
+  border-top: 1px solid #444;
+  margin: 40px 0;
+}
+
+/* Links */
+.article-content a {
+  color: #00FF94;
+  text-decoration: none;
+}
+
+.article-content a:hover {
+  text-decoration: underline;
+}
+
+/* Strong/Bold text */
+.article-content strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Italic text */
+.article-content em {
+  font-style: italic;
+  color: #e5e5e5;
+}
+
+/* Code blocks */
+.article-content code {
+  background-color: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #00FF94;
+}
+
+.article-content pre {
+  background-color: #1a1a1a;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 25px;
+}
+
+.article-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 14px;
+}
+
+/* Blockquotes */
+.article-content blockquote {
+  border-left: 4px solid #00FF94;
+  padding-left: 20px;
+  margin: 25px 0;
+  font-style: italic;
+  color: #d0d0d0;
+}
+
+/* Images */
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 25px 0;
+}
+
 /* TV/Large screen optimizations */
 @media (min-width: 1920px) {
   body {

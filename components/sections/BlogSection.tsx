@@ -8,7 +8,6 @@ import { getPublishedBlogs, type BlogPost } from '@/lib/blogManagement';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { SkeletonBlogCard } from '@/components/LoadingSkeletons';
-import ReactMarkdown from 'react-markdown';
 
 const BlogSection = () => {
   const [ref, inView] = useInView({
@@ -135,11 +134,9 @@ const BlogSection = () => {
                       {post.title}
                     </h3>
 
-                    <div className="text-gray-300 text-sm mb-4 line-clamp-3">
-                      <ReactMarkdown>
-                        {post.excerpt}
-                      </ReactMarkdown>
-                    </div>
+                    <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
 
                     <motion.div
                       whileHover={{ x: 5 }}
