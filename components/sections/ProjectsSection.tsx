@@ -20,10 +20,10 @@ const ProjectsSection = () => {
   const [useGitHub, setUseGitHub] = useState(true);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  // Featured projects (fallback if GitHub fetch fails)
-  const featuredProjects = [
+  // Daanveda projects (always displayed)
+  const daanvedaProjects = [
     {
-      id: 1,
+      id: 'daanveda-lms',
       title: 'Daanveda LMS Platform',
       description: 'Comprehensive Learning Management System with video lessons, interactive quizzes, and automated certificate generation. Features include progress tracking, admin dashboard, and student enrollment management. Code not publicly available due to company policies.',
       image: '/images/lms.png',
@@ -33,7 +33,7 @@ const ProjectsSection = () => {
       live: 'https://lms.daanveda.com',
     },
     {
-      id: 2,
+      id: 'daanveda-blogs',
       title: 'Daanveda Blogs Platform',
       description: 'Automated blog publishing platform with content management system, SEO optimization, and automated posting workflows. Streamlines content creation and publication processes for the company. Code not publicly available due to company policies.',
       image: '/images/blogs.png',
@@ -42,6 +42,10 @@ const ProjectsSection = () => {
       github: '#',
       live: 'https://blogs.daanveda.com',
     },
+  ];
+
+  // Other featured projects (fallback if GitHub fetch fails)
+  const otherFeaturedProjects = [
     {
       id: 3,
       title: 'Automated LMS Platform',
@@ -145,19 +149,31 @@ const ProjectsSection = () => {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
   }, []);
 
-  // Get categories from GitHub projects or use default
-  const categories = useGitHub && githubProjects.length > 0
-    ? ['All', ...Array.from(new Set(githubProjects.map(repo => categorizeRepo(repo))))]
-    : ['All', 'Automation', 'Web', 'AI', 'Security'];
+  // Combine Daanveda projects with GitHub or featured projects
+  const allProjects = useGitHub && githubProjects.length > 0
+    ? [...daanvedaProjects, ...githubProjects]
+    : [...daanvedaProjects, ...otherFeaturedProjects];
+
+  // Get categories from all projects
+  const githubCategories = githubProjects.map(repo => categorizeRepo(repo));
+  const daanvedaCategories = daanvedaProjects.map(project => project.category);
+  const allCategories = useGitHub && githubProjects.length > 0
+    ? [...daanvedaCategories, ...githubCategories]
+    : [...daanvedaCategories, ...otherFeaturedProjects.map(project => project.category)];
+  
+  const categories = ['All', ...Array.from(new Set(allCategories))];
 
   // Filter projects based on active filter
-  const filteredProjects = useGitHub && githubProjects.length > 0
-    ? activeFilter === 'All'
-      ? githubProjects
-      : githubProjects.filter(repo => categorizeRepo(repo) === activeFilter)
-    : activeFilter === 'All'
-      ? featuredProjects
-      : featuredProjects.filter(project => project.category === activeFilter);
+  const filteredProjects = activeFilter === 'All'
+    ? allProjects
+    : allProjects.filter(project => {
+        // Handle both GitHub repos and featured projects
+        if ('category' in project) {
+          return project.category === activeFilter;
+        } else {
+          return categorizeRepo(project as GitHubRepo) === activeFilter;
+        }
+      });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -191,18 +207,17 @@ const ProjectsSection = () => {
             variants={itemVariants}
             className="text-4xl md:text-5xl font-bold text-center mb-4"
           >
-            {useGitHub && githubProjects.length > 0 ? 'GitHub ' : 'Featured '}
-            <span className="gradient-text">Projects</span>
+            My <span className="gradient-text">Projects</span>
           </motion.h2>
 
-          {useGitHub && githubProjects.length > 0 && (
-            <motion.p
-              variants={itemVariants}
-              className="text-center text-gray-400 mb-12"
-            >
-              Real-time projects from my GitHub repository
-            </motion.p>
-          )}
+          <motion.p
+            variants={itemVariants}
+            className="text-center text-gray-400 mb-12"
+          >
+            {useGitHub && githubProjects.length > 0 
+              ? 'Featured work and live projects from my GitHub repository'
+              : 'Featured projects and professional work'}
+          </motion.p>
 
           <motion.div
             variants={itemVariants}
@@ -244,10 +259,13 @@ const ProjectsSection = () => {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {useGitHub && githubProjects.length > 0 ? (
-                // GitHub Projects
-                filteredProjects.map((repo) => {
-                  const ghRepo = repo as GitHubRepo;
+              {filteredProjects.map((project) => {
+                // Check if it's a GitHub repo or featured project
+                const isGitHubRepo = 'html_url' in project;
+                
+                if (isGitHubRepo) {
+                  // Render GitHub Project
+                  const ghRepo = project as GitHubRepo;
                   return (
                     <motion.div
                       key={ghRepo.id}
@@ -340,11 +358,9 @@ const ProjectsSection = () => {
                       </div>
                     </motion.div>
                   );
-                })
-              ) : (
-                // Featured Projects (Fallback)
-                filteredProjects.map((project) => {
-                  const featuredProject = project as typeof featuredProjects[0];
+                } else {
+                  // Render Featured Project
+                  const featuredProject = project as typeof daanvedaProjects[0];
                   return (
                     <motion.div
                       key={featuredProject.id}
@@ -360,20 +376,28 @@ const ProjectsSection = () => {
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                           <div className="flex space-x-4">
-                            <motion.a
-                              whileHover={isTouchDevice ? {} : { scale: 1.1 }}
-                              href={featuredProject.github}
-                              className="p-3 bg-[#00FF94] text-black rounded-full hover:bg-[#00E085] transition-colors"
-                            >
-                              <Github className="w-5 h-5" />
-                            </motion.a>
-                            <motion.a
-                              whileHover={isTouchDevice ? {} : { scale: 1.1 }}
-                              href={featuredProject.live}
-                              className="p-3 bg-white text-black rounded-full hover:bg-gray-200 transition-colors"
-                            >
-                              <ExternalLink className="w-5 h-5" />
-                            </motion.a>
+                            {featuredProject.github !== '#' && (
+                              <motion.a
+                                whileHover={isTouchDevice ? {} : { scale: 1.1 }}
+                                href={featuredProject.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-3 bg-[#00FF94] text-black rounded-full hover:bg-[#00E085] transition-colors"
+                              >
+                                <Github className="w-5 h-5" />
+                              </motion.a>
+                            )}
+                            {featuredProject.live !== '#' && (
+                              <motion.a
+                                whileHover={isTouchDevice ? {} : { scale: 1.1 }}
+                                href={featuredProject.live}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-3 bg-white text-black rounded-full hover:bg-gray-200 transition-colors"
+                              >
+                                <ExternalLink className="w-5 h-5" />
+                              </motion.a>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -386,7 +410,7 @@ const ProjectsSection = () => {
                           </span>
                         </div>
                         
-                        <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+                        <p className="text-gray-300 text-sm mb-4 line-clamp-3">
                           {featuredProject.description}
                         </p>
 
@@ -403,8 +427,8 @@ const ProjectsSection = () => {
                       </div>
                     </motion.div>
                   );
-                })
-              )}
+                }
+              })}
             </div>
           )}
 
