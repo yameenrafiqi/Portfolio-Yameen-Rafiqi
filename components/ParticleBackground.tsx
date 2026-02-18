@@ -29,7 +29,7 @@ const ParticleBackground = () => {
             value: 'transparent',
           },
         },
-        fpsLimit: 120,
+        fpsLimit: 165,
         interactivity: {
           events: {
             onClick: {
