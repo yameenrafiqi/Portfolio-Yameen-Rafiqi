@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import ProjectSettings from '@/models/ProjectSettings';
 
+function normalizeVisibility(visibility: unknown): Record<string, boolean> {
+  if (!visibility || typeof visibility !== 'object') {
+    return {};
+  }
+
+  if (visibility instanceof Map) {
+    return Object.fromEntries(visibility.entries()) as Record<string, boolean>;
+  }
+
+  return Object.entries(visibility as Record<string, unknown>).reduce<Record<string, boolean>>((acc, [key, value]) => {
+    if (typeof value === 'boolean') {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+}
+
 // GET project visibility settings
 export async function GET(request: NextRequest) {
   try {
@@ -17,12 +34,11 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Convert Map to plain object for JSON response
-    const visibilityObj = Object.fromEntries(settings.visibility);
+    const visibilityObj = normalizeVisibility(settings.visibility);
 
-    return NextResponse.json({ 
-      success: true, 
-      data: { visibility: visibilityObj }
+    return NextResponse.json({
+      success: true,
+      data: { visibility: visibilityObj },
     });
   } catch (error: any) {
     console.error('Error fetching project settings:', error);
@@ -40,24 +56,24 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { visibility } = body;
+    const normalizedVisibility = normalizeVisibility(visibility);
 
     // Update or create settings
     const settings = await ProjectSettings.findOneAndUpdate(
       { userId: 'default' },
-      { visibility },
-      { 
-        upsert: true, 
+      { visibility: normalizedVisibility },
+      {
+        upsert: true,
         returnDocument: 'after',
-        runValidators: true 
+        runValidators: true,
       }
     );
 
-    // Convert Map to plain object for JSON response
-    const visibilityObj = Object.fromEntries(settings.visibility);
+    const visibilityObj = normalizeVisibility(settings.visibility);
 
-    return NextResponse.json({ 
-      success: true, 
-      data: { visibility: visibilityObj }
+    return NextResponse.json({
+      success: true,
+      data: { visibility: visibilityObj },
     });
   } catch (error: any) {
     console.error('Error updating project settings:', error);

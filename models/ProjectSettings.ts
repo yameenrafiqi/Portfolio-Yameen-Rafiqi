@@ -18,8 +18,7 @@ const projectSettingsSchema = new mongoose.Schema<IProjectSettings>(
       unique: true,
     },
     visibility: {
-      type: Map,
-      of: Boolean,
+      type: mongoose.Schema.Types.Mixed,
       default: {},
     },
   },

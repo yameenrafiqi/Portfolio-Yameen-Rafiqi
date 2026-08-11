@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Eye, EyeOff, Save, LogOut, Shield, Plus, Trash2, Edit, FolderKanban, Newspaper, Activity, CheckCircle, XCircle, Bell } from 'lucide-react';
+import { Lock, Eye, EyeOff, Save, LogOut, Shield, Plus, Trash2, Edit, FolderKanban, Newspaper, Activity, CheckCircle, XCircle, Bell, RefreshCcw } from 'lucide-react';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { fetchGitHubRepos, type GitHubRepo } from '@/lib/github';
-import { type ProjectVisibility } from '@/lib/projectSettings';
+import { getProjectVisibility, mergeProjectVisibility, saveProjectVisibility, type ProjectVisibility } from '@/lib/projectSettings';
 import { type BlogPost } from '@/lib/blogManagement';
 import { useRouter } from 'next/navigation';
 import WebVitalsMonitor from '@/components/WebVitalsMonitor';
@@ -71,15 +71,25 @@ export default function AdminPage() {
     try {
       const repos = await fetchGitHubRepos();
       setProjects(repos);
-      
-      // Fetch visibility settings from API
-      const response = await fetch('/api/settings/projects');
-      const data = await response.json();
-      if (data.success) {
-        setVisibility(data.data.visibility);
+
+      let nextVisibility = getProjectVisibility();
+
+      try {
+        const response = await fetch('/api/settings/projects');
+        const data = await response.json();
+        if (data.success) {
+          nextVisibility = data.data.visibility || nextVisibility;
+        }
+      } catch (err) {
+        console.warn('Falling back to cached project visibility:', err);
       }
+
+      const mergedVisibility = mergeProjectVisibility(nextVisibility, repos);
+      setVisibility(mergedVisibility);
+      saveProjectVisibility(mergedVisibility);
     } catch (err) {
       console.error('Error loading projects:', err);
+      setVisibility(getProjectVisibility());
     } finally {
       setProjectsLoading(false);
     }
@@ -360,12 +370,16 @@ export default function AdminPage() {
 
   const handleSave = async () => {
     try {
+      const persistedVisibility = mergeProjectVisibility(visibility, projects);
+      setVisibility(persistedVisibility);
+      saveProjectVisibility(persistedVisibility);
+
       const response = await fetch('/api/settings/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ visibility }),
+        body: JSON.stringify({ visibility: persistedVisibility }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setSaved(true);
@@ -380,6 +394,11 @@ export default function AdminPage() {
       console.error('Error saving project settings:', error);
       toast.error('Failed to save project settings');
     }
+  };
+
+  const handleRefreshProjects = async () => {
+    await loadProjects();
+    toast.success('Latest GitHub repositories refreshed');
   };
 
   const isVisible = (repoId: number) => {
@@ -593,9 +612,18 @@ export default function AdminPage() {
                         Manage Projects ({projects.length})
                       </h2>
                       <p className="text-sm text-gray-400">
-                        Toggle projects to show or hide them from your portfolio
+                        Toggle your latest GitHub repositories on or off from the portfolio
                       </p>
                     </div>
+                    <Button
+                      onClick={handleRefreshProjects}
+                      variant="outline"
+                      className="border-[#00FF94] text-[#00FF94] hover:bg-[#00FF94]/10"
+                      disabled={projectsLoading}
+                    >
+                      <RefreshCcw className="w-4 h-4 mr-2" />
+                      Refresh GitHub
+                    </Button>
                   </div>
 
                   {projectsLoading ? (
